@@ -1,0 +1,15 @@
+{
+  "desplay": "root",
+  "references": [
+    {
+      "path": "apps/example"
+    },
+    {
+      "path": "packages/inbeg-m3-color"
+    },
+    {
+      "path": "packages/inbeg-m3-theme"
+    }
+  ],
+  "files": []
+}

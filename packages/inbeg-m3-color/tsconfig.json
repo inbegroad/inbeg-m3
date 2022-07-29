@@ -1,0 +1,34 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "lib": [
+      "ESNext",
+      "DOM"
+    ],
+    "moduleResolution": "Node",
+    "strict": true,
+    "resolveJsonModule": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "declaration": true,
+    "composite": true,
+    "emitDeclarationOnly": true,
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "declarationDir": "./types"
+  },
+  "references": [],
+  "exclude": [
+    "node_modules",
+    "vite.config.ts",
+    "tvyw.ts",
+    "dist/*",
+    "test/*"
+  ],
+  "include": [
+    "src"
+  ],
+  "desplay": "@inbeg-m3/color"
+}

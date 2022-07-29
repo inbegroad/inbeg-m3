@@ -1,0 +1,41 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "useDefineForClassFields": true,
+    "declaration": true,
+    "module": "ESNext",
+    "lib": [
+      "ESNext",
+      "DOM"
+    ],
+    "moduleResolution": "Node",
+    "strict": true,
+    "sourceMap": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "emitDeclarationOnly": true,
+    "composite": true,
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "declarationDir": "./types"
+  },
+  "references": [
+    {
+      "path": "../inbeg-m3-color"
+    }
+  ],
+  "exclude": [
+    "node_modules",
+    "vite.config.ts",
+    "tvyw.ts",
+    "dist/*",
+    "test/*"
+  ],
+  "include": [
+    "src"
+  ],
+  "desplay": "@inbeg-m3/theme"
+}

@@ -1,0 +1,40 @@
+{
+  "name": "@inbeg-m3/color",
+  "version": "0.0.1",
+  "license": "MIT",
+  "packageManager": "yarn@3.2.2",
+  "main": "dist/index.js",
+  "module": "dist/index.es.js",
+  "types": "types/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.es.js",
+      "require": "./dist/index.js",
+      "default": "./dist/index.umd.js",
+      "node": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tvyw build",
+    "dev": "tvyw",
+    "preview": "tvyw preview",
+    "deploy": "tvyw deploy"
+  },
+  "dependencies": {
+    "@material/material-color-utilities": "^0.1.2",
+    "string-color-converter": "^2.0.3"
+  },
+  "devDependencies": {
+    "@types/node": "18.0.3",
+    "@typescript-eslint/eslint-plugin": "^5.19.0",
+    "@typescript-eslint/parser": "^5.19.0",
+    "concurrently": "7.2.2",
+    "eslint": "^8.19.0",
+    "eslint-config-prettier": "^8.5.0",
+    "prettier": "^2.7.1",
+    "rimraf": "^3.0.2",
+    "tvyw": "../../../tvyw/packages/tvyw",
+    "typescript": "4.7.4",
+    "vite": "2.9.14"
+  }
+}
