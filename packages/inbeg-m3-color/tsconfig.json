@@ -14,10 +14,12 @@
     "noImplicitReturns": true,
     "declaration": true,
     "composite": true,
+    "disableSourceOfProjectReferenceRedirect": false,
     "emitDeclarationOnly": true,
     "rootDir": "./src",
     "outDir": "./dist",
-    "declarationDir": "./types"
+    "declarationDir": "./types",
+    "types": []
   },
   "references": [],
   "exclude": [

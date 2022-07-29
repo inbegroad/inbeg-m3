@@ -24,7 +24,7 @@ function App() {
   const { isDark, isDarkButtonOnClick, theme } = useDark(
     new Theme({
       colors: {
-        // darkMode: "manual",
+        darkMode: "manual",
         colorSource: "#97c9a5",
       },
     })
@@ -50,12 +50,15 @@ function App() {
         <button
           type="button"
           title={isDark ? "Dark" : "Light"}
-          // onClick={isDarkButtonOnClick}
+          onClick={isDarkButtonOnClick}
           style={{
             border: "none",
             padding: "1rem 1.5rem",
-            backgroundColor: theme.meta.colors.getColor("primary", "color")
-              .color,
+            backgroundColor: theme.meta.colors.getColor(
+              "primary",
+              "color",
+              isDark
+            ).color,
             color: theme.meta.colors.getColor("neutral", "onColor", isDark)
               .color,
             fontSize: theme.theme.typography.label.large.fontSize,

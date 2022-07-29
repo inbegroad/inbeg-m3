@@ -17,6 +17,7 @@
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "emitDeclarationOnly": true,
+    "disableSourceOfProjectReferenceRedirect": false,
     "composite": true,
     "rootDir": "./src",
     "outDir": "./dist",
