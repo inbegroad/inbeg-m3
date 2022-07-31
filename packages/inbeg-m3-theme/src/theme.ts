@@ -1,4 +1,9 @@
-import { ColorsPalette } from "@inbeg-m3/color";
+import {
+  applyTheme as apply,
+  ColorsNamesType,
+  ColorsPalette,
+  ColorsVNameType,
+} from "@inbeg-m3/color";
 import { bordersConst } from "./border";
 import { elevationConst } from "./elevation";
 import {
@@ -15,10 +20,11 @@ import {
 } from "./types";
 import { typographyConst } from "./typography";
 
+export const applyTheme = apply;
 export class Theme {
   private colors: ColorsPalette;
   private elevation: ElevationType;
-  private defaultShape: BorderShapeType;
+  defaultShape: BorderShapeType;
   private borders: BordersValuesType;
   private typography: TypographyType;
   constructor({ colors, elevation, border, typography }: ThemeConst = {}) {
@@ -28,12 +34,28 @@ export class Theme {
     this.borders = bordersConst(border?.borders);
     this.elevation = elevationConst(elevation);
   }
-  getTypographyVeriant(variant: TypographyKeys, size: SizeKeysType) {
-    return this.typography[variant][size];
+  private variantColor(surface: ColorsVNameType): ColorsVNameType {
+    if (surface === "color") return "onColor";
+    else if (surface === "colorContainer") return "onColorContainer";
+    else if (surface === "onColor") return "color";
+    else return "colorContainer";
+  }
+
+  getTypographyVeriant(
+    variant: TypographyKeys,
+    size: SizeKeysType,
+    color: ColorsNamesType,
+    surface: ColorsVNameType,
+    dark?: boolean
+  ) {
+    return {
+      ...this.typography[variant][size],
+      color: this.colors.getColor(color, this.variantColor(surface), dark),
+    };
   }
   getBorder(
     intencity: ShapeInt | null,
-    shape: BorderShapeType = this.defaultShape,
+    shape: BorderShapeType,
     corner: Corners
   ) {
     if (intencity)
@@ -44,6 +66,9 @@ export class Theme {
   }
   getElevation(variant: ElevationInt) {
     return this.elevation[variant][this.colors.isDark ? "dark" : "light"];
+  }
+  getColor(name: ColorsNamesType, surface?: ColorsVNameType, dark?: boolean) {
+    return this.colors.getColor(name, surface, dark);
   }
   get colorsMeta() {
     return this.colors;

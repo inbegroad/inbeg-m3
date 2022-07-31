@@ -2,25 +2,25 @@ import {
   customColor,
   CustomColor,
   Hct,
-  TonalPalette,
-  CorePalette as OrigCorePalette,
 } from "@material/material-color-utilities";
+import { BasePalette } from "./base-palette";
 import { getColors } from "./get-colors";
 import { colorsNamesEnum, surfacesColorsEnum } from "./schemas";
-import { ColorsNamesEnumType, ColorsurfacesEnumType } from "./types";
+import { TonalPalette } from "./tonal-palette";
+import { ColorsNamesEnumType, ColorSurfacesEnumType } from "./types";
 
 export class CorePalette {
   hct: Hct;
   hue: number;
   private source: number;
-  private internalCore: OrigCorePalette;
+  private internalCore: BasePalette;
 
   private customColors: {
     name: string;
     value: number;
   }[];
   constructor(argb: number, customColors?: CustomColor[]) {
-    this.internalCore = OrigCorePalette.of(argb);
+    this.internalCore = BasePalette.of(argb);
     this.source = argb;
     this.hct = Hct.fromInt(argb);
     this.hue = this.hct.hue;
@@ -34,7 +34,7 @@ export class CorePalette {
   static isCustom(color: string) {
     return (
       !colorsNamesEnum.includes(color as ColorsNamesEnumType) &&
-      !surfacesColorsEnum.includes(color as ColorsurfacesEnumType)
+      !surfacesColorsEnum.includes(color as ColorSurfacesEnumType)
     );
   }
   private primary() {
@@ -92,7 +92,12 @@ export class CorePalette {
   private getCustoms() {
     const rec: Record<string, TonalPalette> = {};
     for (const { name, value } of this.customColors) {
-      rec[name] = TonalPalette.fromInt(value);
+      try {
+        const color = TonalPalette.fromInt(value);
+        rec[name] = color;
+      } catch (_error) {
+        throw new Error(`Cant find custom color named ${name}`);
+      }
     }
     return rec;
   }

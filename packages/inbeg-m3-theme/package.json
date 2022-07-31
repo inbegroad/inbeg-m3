@@ -1,6 +1,6 @@
 {
   "name": "@inbeg-m3/theme",
-  "version": "0.0.13",
+  "version": "0.0.17",
   "license": "MIT",
   "publishConfig": {
     "access": "public"
@@ -24,7 +24,7 @@
     "deploy": "tvyw deploy"
   },
   "dependencies": {
-    "@inbeg-m3/color": "0.0.13"
+    "@inbeg-m3/color": "workspace:^"
   },
   "devDependencies": {
     "@types/node": "18.0.3",

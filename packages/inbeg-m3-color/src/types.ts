@@ -1,13 +1,12 @@
-import { TonalPalette } from "@material/material-color-utilities";
 import * as schemas from "./schemas";
+import { TonalPalette } from "./tonal-palette";
 
 export type LoosenString<T extends string> = T | Omit<string, T>;
-export type GetterType = "custom" | "orig" | "surf";
 export type ColorsNamesEnumType = typeof schemas.colorsNamesEnum[number];
-export type ColorsurfacesEnumType = typeof schemas.surfacesColorsEnum[number];
+export type ColorSurfacesEnumType = typeof schemas.surfacesColorsEnum[number];
 export type ColorsVNameType = typeof schemas.colorsVNamesEnum[number];
 export type ThemeModeType = typeof schemas.themeModeEnum[number];
-export type OrigColTypes = ColorsNamesEnumType | ColorsurfacesEnumType;
+export type OrigColTypes = ColorsNamesEnumType | ColorSurfacesEnumType;
 export type ColorsNamesType = LoosenString<OrigColTypes>;
 export type GetColorsReturnType = {
   argb: number;
@@ -24,17 +23,21 @@ export type ReturnedArgbNormType = Record<
 export type ProcessedColor = {
   palette: TonalPalette;
   argb: ReturnedArgbNormType;
-} & Record<ColorsVNameType, Record<ThemeModeType, string>>;
+  hex: Record<ColorsVNameType, Record<ThemeModeType, string>>;
+};
 
 export type ProcessedSurfeceColor = {
   palette: TonalPalette;
   argb: ReturnedArgbSurfaceType;
-} & Record<ThemeModeType, string>;
+  hex: Record<ThemeModeType, string>;
+};
 export type ColorsObject = {
-  customColors: Record<string, ProcessedColor>;
-  surfaces: Record<ColorsurfacesEnumType, ProcessedSurfeceColor>;
-} & Record<ColorsNamesEnumType, ProcessedColor>;
+  customs: Record<string, ProcessedColor>;
+  surfaces: Record<ColorSurfacesEnumType, ProcessedSurfeceColor>;
+  originals: Record<ColorsNamesEnumType, ProcessedColor>;
+};
 
+export type ColorsCategory = keyof ColorsObject;
 export type ColorValueType = {
   tone: TonalPalette["tone"];
   source: TonalPalette;

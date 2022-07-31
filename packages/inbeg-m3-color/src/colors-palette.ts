@@ -2,30 +2,28 @@ import {
   argbFromHex,
   CustomColor,
   Hct,
-  themeFromSourceColor,
   hexFromArgb,
-  TonalPalette,
-  Theme,
-  applyTheme,
   argbFromRgb,
   sourceColorFromImage,
+  applyTheme as apply,
 } from "@material/material-color-utilities";
 import convColor from "string-color-converter";
 import { CorePalette } from "./core-pallete";
 import { isDark } from "./is-dark";
 import { colorsNamesEnum, surfacesColorsEnum } from "./schemas";
+import { TonalPalette } from "./tonal-palette";
 import {
   ColorConst,
   ColorsVNameType,
   ColorsNamesEnumType,
   ColorsNamesType,
-  ColorsurfacesEnumType,
+  ColorSurfacesEnumType,
   GetColorsReturnType,
-  GetterType,
-  ProcessedSurfeceColor,
-  ProcessedColor,
+  ColorsCategory,
   DarkModeType,
 } from "./types";
+
+export const applyTheme = apply;
 
 export const objectKeys = <T extends object>(object: T): (keyof T)[] => {
   const key = Object.keys(object);
@@ -33,7 +31,6 @@ export const objectKeys = <T extends object>(object: T): (keyof T)[] => {
 };
 export class ColorsPalette {
   private colorSource: number;
-  private theme: Theme;
   private colorsObject: CorePalette;
   private customColorsProps: CustomColor[];
   darkMode: DarkModeType;
@@ -63,7 +60,6 @@ export class ColorsPalette {
           throw err;
         });
     }
-    this.theme = themeFromSourceColor(this.colorSource, this.customColorsProps);
     this.colorsObject = new CorePalette(
       this.colorSource,
       this.customColorsProps
@@ -88,10 +84,6 @@ export class ColorsPalette {
       );
   }
 
-  applyTheme(options?: { dark?: boolean; target?: HTMLElement }) {
-    return applyTheme(this.theme, options);
-  }
-
   static getArgb(colorSource: string | number) {
     return typeof colorSource === "number"
       ? colorSource
@@ -103,44 +95,35 @@ export class ColorsPalette {
     return argbFromRgb(r, g, b);
   }
 
-  private colorTypeGetter(name: ColorsNamesType): GetterType {
-    if (ColorsPalette.isOrig(name)) return "orig";
-    else if (ColorsPalette.isSurface(name)) return "surf";
-    else return "custom";
+  private colorTypeGetter(name: ColorsNamesType): ColorsCategory {
+    if (this.isOrig(name)) return "originals";
+    else if (this.isSurface(name)) return "surfaces";
+    else return "customs";
+  }
+  private getColorObjectFromName(name: ColorsNamesType) {
+    const type = this.colorTypeGetter(name);
+    if (type === "originals") {
+      return {
+        type,
+        color: this.colorsObject.colors.originals[name as ColorsNamesEnumType],
+      };
+    } else if (type === "surfaces") {
+      return {
+        type,
+        color: this.colorsObject.colors.surfaces[name as ColorSurfacesEnumType],
+      };
+    }
+    return { type, color: this.colorsObject.colors.customs[name as string] };
   }
   get colors() {
     return this.colorsObject.colors;
   }
 
-  static isOrig(color: ColorsNamesType) {
+  private isOrig(color: ColorsNamesType) {
     return colorsNamesEnum.includes(color as ColorsNamesEnumType);
   }
-  static isSurface(color: ColorsNamesType) {
-    return surfacesColorsEnum.includes(color as ColorsurfacesEnumType);
-  }
-
-  private getCustom(name: ColorsNamesType) {
-    return this.colorsObject.colors.customColors[name as string];
-  }
-  private getOrig(name: ColorsNamesType) {
-    return this.colorsObject.colors[name as ColorsNamesEnumType];
-  }
-  private getSurf(name: ColorsNamesType) {
-    return this.colorsObject.colors.surfaces[name as ColorsurfacesEnumType];
-  }
-
-  private getObjectFromName(name: ColorsNamesType, type: GetterType) {
-    switch (type) {
-      case "custom": {
-        return this.getCustom(name);
-      }
-      case "orig": {
-        return this.getOrig(name);
-      }
-      case "surf": {
-        return this.getSurf(name);
-      }
-    }
+  private isSurface(color: ColorsNamesType) {
+    return surfacesColorsEnum.includes(color as ColorSurfacesEnumType);
   }
 
   static tone(color: string | number, amount = 10, isArgb = false) {
@@ -154,38 +137,38 @@ export class ColorsPalette {
     return isArgb ? argb : hexFromArgb(argb);
   }
 
-  private isColorObjSurf(
-    color: ProcessedColor | ProcessedSurfeceColor
-  ): color is ProcessedSurfeceColor {
-    if (Object.hasOwn(color, "dark")) {
-      return (color as ProcessedSurfeceColor) !== undefined;
-    } else return false;
-  }
-
   getColor(
     name: ColorsNamesType,
-    surface: ColorsVNameType = "color"
+    surface: ColorsVNameType = "color",
+    dark?: boolean
   ): GetColorsReturnType {
-    const colorType = this.colorTypeGetter(name as string);
-    const color = this.getObjectFromName(name, colorType);
-    if (this.isColorObjSurf(color)) {
-      const cuColor = color[this.isDark ? "dark" : "light"];
+    const color = this.getColorObjectFromName(name);
+    const dk = dark !== undefined ? dark : this.isDark;
+    if (color.type === "originals" || color.type === "customs") {
+      const cuColor = {
+        hex: color.color.hex[surface][dk ? "dark" : "light"],
+        argb: color.color.argb[surface][dk ? "dark" : "light"],
+      };
       const tone = (amount: number, argb = false) =>
-        ColorsPalette.tone(cuColor, amount, argb);
+        ColorsPalette.tone(cuColor.argb, amount, argb);
       return {
-        argb: argbFromHex(cuColor),
-        color: cuColor,
-        palette: color.palette,
+        argb: cuColor.argb,
+        color: cuColor.hex,
+        palette: color.color.palette,
         tone,
       };
-    } else {
-      const cuColor = color[surface][this.isDark ? "dark" : "light"];
+    }
+    {
+      const cuColor = {
+        hex: color.color.hex[this.isDark ? "dark" : "light"],
+        argb: color.color.argb[this.isDark ? "dark" : "light"],
+      };
       const tone = (amount: number, argb = false) =>
-        ColorsPalette.tone(cuColor, amount, argb);
+        ColorsPalette.tone(cuColor.argb, amount, argb);
       return {
-        argb: argbFromHex(cuColor),
-        color: cuColor,
-        palette: color.palette,
+        argb: cuColor.argb,
+        color: cuColor.hex,
+        palette: color.color.palette,
         tone,
       };
     }

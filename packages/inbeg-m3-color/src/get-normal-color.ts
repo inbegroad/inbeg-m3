@@ -1,5 +1,6 @@
-import { hexFromArgb, TonalPalette } from "@material/material-color-utilities";
+import { hexFromArgb } from "@material/material-color-utilities";
 import { objectKeys } from "./colors-palette";
+import { TonalPalette } from "./tonal-palette";
 import { ProcessedColor } from "./types";
 
 export const getNormalColors = <T extends string = string>(
@@ -27,21 +28,23 @@ export const getNormalColors = <T extends string = string>(
     colorsObj[color] = {
       palette: currentCol,
       argb: temp,
-      color: {
-        dark: hexFromArgb(temp.color.dark),
-        light: hexFromArgb(temp.color.light),
-      },
-      colorContainer: {
-        dark: hexFromArgb(temp.colorContainer.dark),
-        light: hexFromArgb(temp.colorContainer.light),
-      },
-      onColor: {
-        dark: hexFromArgb(temp.onColor.dark),
-        light: hexFromArgb(temp.onColor.light),
-      },
-      onColorContainer: {
-        dark: hexFromArgb(temp.onColorContainer.dark),
-        light: hexFromArgb(temp.onColorContainer.light),
+      hex: {
+        color: {
+          dark: hexFromArgb(temp.color.dark),
+          light: hexFromArgb(temp.color.light),
+        },
+        colorContainer: {
+          dark: hexFromArgb(temp.colorContainer.dark),
+          light: hexFromArgb(temp.colorContainer.light),
+        },
+        onColor: {
+          dark: hexFromArgb(temp.onColor.dark),
+          light: hexFromArgb(temp.onColor.light),
+        },
+        onColorContainer: {
+          dark: hexFromArgb(temp.onColorContainer.dark),
+          light: hexFromArgb(temp.onColorContainer.light),
+        },
       },
     };
   }

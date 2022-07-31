@@ -1,6 +1,6 @@
-import { TonalPalette } from "@material/material-color-utilities";
 import { getNormalColors } from "./get-normal-color";
 import { getSurfaceColors } from "./get-surf-color";
+import { TonalPalette } from "./tonal-palette";
 import { ColorsNamesEnumType, ColorsObject } from "./types";
 
 export type GetColorsProps = {
@@ -12,9 +12,8 @@ export const getColors = ({
   customs,
   originals,
   surfaces,
-}: //@ts-ignore
-GetColorsProps): ColorsObject => ({
-  customColors: getNormalColors(customs),
+}: GetColorsProps): ColorsObject => ({
+  customs: getNormalColors(customs),
   surfaces: getSurfaceColors(surfaces),
-  ...getNormalColors<ColorsNamesEnumType>(originals),
+  originals: getNormalColors<ColorsNamesEnumType>(originals),
 });
