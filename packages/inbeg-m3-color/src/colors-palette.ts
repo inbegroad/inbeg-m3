@@ -98,7 +98,9 @@ export class ColorsPalette {
   private colorTypeGetter(name: ColorsNamesType): ColorsCategory {
     if (this.isOrig(name)) return "originals";
     else if (this.isSurface(name)) return "surfaces";
-    else return "customs";
+    else if (this.customColorsProps.map((c) => c.name).includes(name as string))
+      return "customs";
+    else throw new Error(`${name} is not a valid color name`);
   }
   private getColorObjectFromName(name: ColorsNamesType) {
     const type = this.colorTypeGetter(name);

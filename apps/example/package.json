@@ -8,7 +8,7 @@
     "dev": "tvyw"
   },
   "dependencies": {
-    "@inbeg-m3/theme": "workspace:^"
+    "@inbeg-m3/theme": "0.0.18"
   },
   "devDependencies": {
     "@types/node": "18.0.3",
