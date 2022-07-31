@@ -81,10 +81,7 @@ export class ColorsPalette {
 
   set isDark(dark: boolean) {
     if (this.darkMode === "manual") {
-      console.log(dark);
-
       this.internalDark = dark;
-      console.log(this.internalDark);
     } else
       throw new Error(
         "Dark mode is set to system-prefered, you cant set it manually"
@@ -122,16 +119,26 @@ export class ColorsPalette {
     return surfacesColorsEnum.includes(color as ColorsurfacesEnumType);
   }
 
+  private getCustom(name: ColorsNamesType) {
+    return this.colorsObject.colors.customColors[name as string];
+  }
+  private getOrig(name: ColorsNamesType) {
+    return this.colorsObject.colors[name as ColorsNamesEnumType];
+  }
+  private getSurf(name: ColorsNamesType) {
+    return this.colorsObject.colors.surfaces[name as ColorsurfacesEnumType];
+  }
+
   private getObjectFromName(name: ColorsNamesType, type: GetterType) {
     switch (type) {
       case "custom": {
-        return this.colorsObject.colors.customColors[name as string];
+        return this.getCustom(name);
       }
       case "orig": {
-        return this.colorsObject.colors[name as ColorsNamesEnumType];
+        return this.getOrig(name);
       }
       case "surf": {
-        return this.colorsObject.colors.surfaces[name as ColorsurfacesEnumType];
+        return this.getSurf(name);
       }
     }
   }
@@ -150,21 +157,19 @@ export class ColorsPalette {
   private isColorObjSurf(
     color: ProcessedColor | ProcessedSurfeceColor
   ): color is ProcessedSurfeceColor {
-    return (
-      (color as ProcessedSurfeceColor).dark !== undefined &&
-      (color as ProcessedSurfeceColor).light !== undefined
-    );
+    if (Object.hasOwn(color, "dark")) {
+      return (color as ProcessedSurfeceColor) !== undefined;
+    } else return false;
   }
 
   getColor(
     name: ColorsNamesType,
-    surface: ColorsVNameType = "color",
-    dark: boolean = this.getIsDark()
+    surface: ColorsVNameType = "color"
   ): GetColorsReturnType {
     const colorType = this.colorTypeGetter(name as string);
-    const color = this.getObjectFromName(name as string, colorType);
+    const color = this.getObjectFromName(name, colorType);
     if (this.isColorObjSurf(color)) {
-      const cuColor = color[dark ? "dark" : "light"];
+      const cuColor = color[this.isDark ? "dark" : "light"];
       const tone = (amount: number, argb = false) =>
         ColorsPalette.tone(cuColor, amount, argb);
       return {
@@ -174,7 +179,7 @@ export class ColorsPalette {
         tone,
       };
     } else {
-      const cuColor = color[surface][dark ? "dark" : "light"];
+      const cuColor = color[surface][this.isDark ? "dark" : "light"];
       const tone = (amount: number, argb = false) =>
         ColorsPalette.tone(cuColor, amount, argb);
       return {

@@ -2,12 +2,18 @@ import { ColorConst } from "@inbeg-m3/color";
 
 export type TypographyKeys = "label" | "body" | "hedline" | "display" | "title";
 export type SizeKeysType = "small" | "medium" | "large";
+type TBCorners = "top" | "bottom";
+type LRCorners = "left" | "right";
+type CompCorners = `${TBCorners}-${LRCorners}`;
+export type Corners = "all" | TBCorners | LRCorners | CompCorners;
 export type ElevationInt = 1 | 2 | 3 | 4 | 5;
 export type ShapeInt = 1 | 2 | 3 | 4 | 5 | 6 | 7;
+
 export type ElevationType = Record<
   ElevationInt,
   Record<"light" | "dark", string>
 >;
+
 export type TypographyValuesType = {
   fontFamily: string;
   fontStyle: string;
@@ -20,25 +26,25 @@ export type TypographyType = Record<
   TypographyKeys,
   Record<SizeKeysType, TypographyValuesType>
 >;
-export type BordersValuesType = Record<
-  BorderShapeType,
-  Record<ShapeInt, string>
->;
+export type BordersValuesType = {
+  cut: { [K in Corners]: { [K in ShapeInt]?: string } };
+  rounded: { [K in ShapeInt]: string };
+};
+//  Record<
+//   BorderShapeType,
+//   Record<Corners, Record<ShapeInt, string>>
+// >;
 export type BorderShapeType = "rounded" | "cut";
 export type BorderType = {
   defaultShape: BorderShapeType;
-  borders: BordersValuesType;
+  borders: DeepPartial<BordersValuesType>;
 };
-
-export type ElevationConst = DeepPartial<ElevationType>;
-export type TypographyConst = DeepPartial<TypographyType>;
-export type BorderConst = DeepPartial<BorderType>;
 
 export type ThemeConst = {
   colors?: ColorConst;
-  elevation?: ElevationConst;
-  border?: BorderConst;
-  typography?: TypographyConst;
+  elevation?: DeepPartial<ElevationType>;
+  border?: DeepPartial<BorderType>;
+  typography?: DeepPartial<TypographyType>;
 };
 
 export type DeepPartial<T> = T extends object
