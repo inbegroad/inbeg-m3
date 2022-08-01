@@ -44,8 +44,8 @@ export class Theme {
   getTypographyVeriant(
     variant: TypographyKeys,
     size: SizeKeysType,
-    color: ColorsNamesType,
-    surface: ColorsVNameType,
+    surface: ColorsVNameType = "color",
+    color: ColorsNamesType = "text",
     dark?: boolean
   ) {
     return {

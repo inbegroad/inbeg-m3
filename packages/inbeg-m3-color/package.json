@@ -1,6 +1,6 @@
 {
   "name": "@inbeg-m3/color",
-  "version": "0.0.18",
+  "version": "0.0.19",
   "license": "MIT",
   "publishConfig": {
     "access": "public"

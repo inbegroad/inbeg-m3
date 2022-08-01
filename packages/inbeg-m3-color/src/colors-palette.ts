@@ -8,7 +8,7 @@ import {
   applyTheme as apply,
 } from "@material/material-color-utilities";
 import convColor from "string-color-converter";
-import { CorePalette } from "./core-pallete";
+import { CorePalette } from "./core-palette";
 import { isDark } from "./is-dark";
 import { colorsNamesEnum, surfacesColorsEnum } from "./schemas";
 import { TonalPalette } from "./tonal-palette";

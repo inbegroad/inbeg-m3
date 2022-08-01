@@ -13,7 +13,7 @@ yarn.lock
 .rollup.cache
 tsconfig.tsbuildinfo
 rollup.config.js
-vite.config.ts
+vite.config.js
 tsconfig.json
 tvyw.ts
 .turbo

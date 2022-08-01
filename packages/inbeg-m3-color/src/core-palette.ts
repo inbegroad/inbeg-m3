@@ -56,6 +56,9 @@ export class CorePalette {
     return this.internalCore.error;
   }
 
+  private text() {
+    return this.internalCore.n1;
+  }
   private background() {
     return this.internalCore.n1;
   }
@@ -109,6 +112,7 @@ export class CorePalette {
       neutral: this.neutral(),
       neutralVariant: this.neutralVariant(),
       error: this.error(),
+      text: this.text(),
     };
   }
   private getSurfaces(): Record<string, TonalPalette> {

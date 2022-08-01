@@ -13,15 +13,21 @@ export const getNormalColors = <T extends string = string>(
     const currentCol = colors[color];
 
     const temp = {
-      color: { dark: currentCol.tone(80), light: currentCol.tone(40) },
-      onColor: { dark: currentCol.tone(20), light: currentCol.tone(100) },
+      color: {
+        dark: currentCol.tone(color === "text" ? 15 : 80),
+        light: currentCol.tone(color === "text" ? 95 : 40),
+      },
+      onColor: {
+        dark: currentCol.tone(color === "text" ? 100 : 20),
+        light: currentCol.tone(color === "text" ? 5 : 100),
+      },
       colorContainer: {
-        dark: currentCol.tone(30),
-        light: currentCol.tone(90),
+        dark: currentCol.tone(color === "text" ? 97 : 30),
+        light: currentCol.tone(color === "text" ? 15 : 90),
       },
       onColorContainer: {
-        dark: currentCol.tone(90),
-        light: currentCol.tone(10),
+        dark: currentCol.tone(color === "text" ? 0 : 90),
+        light: currentCol.tone(color === "text" ? 100 : 10),
       },
     };
 

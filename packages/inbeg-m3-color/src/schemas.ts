@@ -25,4 +25,5 @@ export const colorsNamesEnum = [
   "error",
   "neutral",
   "neutralVariant",
+  "text",
 ] as const;
