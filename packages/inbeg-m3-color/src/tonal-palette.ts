@@ -1,8 +1,8 @@
 import { Hct } from "@material/material-color-utilities";
 
 export class TonalPalette {
-  private hue: number;
-  private chroma: number;
+  hue: number;
+  chroma: number;
   constructor(hue: number, chroma: number) {
     this.hue = hue;
     this.chroma = chroma;

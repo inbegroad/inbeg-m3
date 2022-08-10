@@ -1,5 +1,4 @@
 import {
-  argbFromHex,
   CustomColor,
   Hct,
   hexFromArgb,
@@ -9,6 +8,8 @@ import {
 } from "@material/material-color-utilities";
 import convColor from "string-color-converter";
 import { CorePalette } from "./core-palette";
+import { normalColorsTones } from "./get-normal-color";
+import { surfaceColorsTones } from "./get-surf-color";
 import { isDark } from "./is-dark";
 import { colorsNamesEnum, surfacesColorsEnum } from "./schemas";
 import { TonalPalette } from "./tonal-palette";
@@ -127,52 +128,117 @@ export class ColorsPalette {
   private isSurface(color: ColorsNamesType) {
     return surfacesColorsEnum.includes(color as ColorSurfacesEnumType);
   }
+  // static getToneValue();
+  static changeTone(
+    amount: number,
+    color: number,
+    tone: number,
+    op: "+" | "-"
+  ) {
+    // const { chroma, hue, tone } = Hct.fromInt(color);
+    const tTone = Math.floor(tone);
+    const { chroma, hue } = TonalPalette.fromInt(color);
+    // const currentTone = this.
+    // const;
+    // const currentTone = 100 - tone;
+    // const toneRatio = tone/100
+    // const currentTone=toneRatio*tone
+    const nextTone = op === "+" ? tTone + amount : tTone - amount;
+    if (nextTone < 0 || nextTone > 100) {
+      throw new Error(
+        `Tone value must be between 0 and 100, current tone is ${nextTone}, your range is [ 0 to ${
+          99.9 - tone
+        } ]`
+      );
+    }
+    const argb = Hct.from(hue, chroma, nextTone).toInt();
 
-  static tone(color: string | number, amount = 10, isArgb = false) {
-    let argb = 0;
-    const newArgb =
-      typeof color === "string" ? argbFromHex(convColor(color).hex) : color;
-    const hct = Hct.fromInt(newArgb);
-    const tonal = TonalPalette.fromHueAndChroma(hct.hue, hct.chroma);
-    argb = tonal.tone(hct.tone + amount);
-
-    return isArgb ? argb : hexFromArgb(argb);
+    return {
+      argb,
+      color: hexFromArgb(argb),
+      palette: TonalPalette.fromInt(argb),
+    };
+  }
+  private getColorValues(
+    name: ColorsNamesType,
+    surface: ColorsVNameType,
+    dark?: boolean
+  ) {
+    const color = this.getColorObjectFromName(name);
+    const dk = dark !== undefined ? dark : this.isDark;
+    if (color.type === "originals" || color.type === "customs") {
+      return {
+        hex: color.color.hex[surface][dk ? "dark" : "light"],
+        argb: color.color.argb[surface][dk ? "dark" : "light"],
+        palette: color.color.palette,
+        tone: normalColorsTones[surface][dk ? "dark" : "light"],
+      };
+    } else
+      return {
+        hex: color.color.hex[dk ? "dark" : "light"],
+        argb: color.color.argb[dk ? "dark" : "light"],
+        palette: color.color.palette,
+        tone: surfaceColorsTones[name as ColorSurfacesEnumType][
+          dk ? "dark" : "light"
+        ],
+      };
   }
 
   getColor(
     name: ColorsNamesType,
-    surface: ColorsVNameType = "color",
+    surface: ColorsVNameType,
     dark?: boolean
   ): GetColorsReturnType {
-    const color = this.getColorObjectFromName(name);
-    const dk = dark !== undefined ? dark : this.isDark;
-    if (color.type === "originals" || color.type === "customs") {
-      const cuColor = {
-        hex: color.color.hex[surface][dk ? "dark" : "light"],
-        argb: color.color.argb[surface][dk ? "dark" : "light"],
-      };
-      const tone = (amount: number, argb = false) =>
-        ColorsPalette.tone(cuColor.argb, amount, argb);
-      return {
-        argb: cuColor.argb,
-        color: cuColor.hex,
-        palette: color.color.palette,
-        tone,
-      };
-    }
-    {
-      const cuColor = {
-        hex: color.color.hex[this.isDark ? "dark" : "light"],
-        argb: color.color.argb[this.isDark ? "dark" : "light"],
-      };
-      const tone = (amount: number, argb = false) =>
-        ColorsPalette.tone(cuColor.argb, amount, argb);
-      return {
-        argb: cuColor.argb,
-        color: cuColor.hex,
-        palette: color.color.palette,
-        tone,
-      };
-    }
+    const { argb, hex, palette, tone } = this.getColorValues(
+      name,
+      surface,
+      dark
+    );
+    return {
+      argb,
+      color: hex,
+      palette,
+      darken(amount) {
+        return ColorsPalette.changeTone(amount, argb, tone, "-");
+      },
+      lighten(amount) {
+        return ColorsPalette.changeTone(amount, argb, tone, "+");
+      },
+    };
+    // const color = this.getColorObjectFromName(name);
+    // const dk = dark !== undefined ? dark : this.isDark;
+    // if (color.type === "originals" || color.type === "customs") {
+    //   const cuColor = {
+    //     hex: color.color.hex[surface][dk ? "dark" : "light"],
+    //     argb: color.color.argb[surface][dk ? "dark" : "light"],
+    //   };
+    //   return {
+    //     argb: cuColor.argb,
+    //     color: cuColor.hex,
+    //     palette: color.color.palette,
+    //     darken(amount) {
+    //       return ColorsPalette.changeTone(amount, cuColor.argb, "-");
+    //     },
+    //     lighten(amount) {
+    //       return ColorsPalette.changeTone(amount, cuColor.argb, "+");
+    //     },
+    //   };
+    // } else {
+    //   const cuColor = {
+    //     hex: color.color.hex[this.isDark ? "dark" : "light"],
+    //     argb: color.color.argb[this.isDark ? "dark" : "light"],
+    //   };
+    //   return {
+    //     argb: cuColor.argb,
+    //     color: cuColor.hex,
+    //     palette: color.color.palette,
+    //     darken(amount) {
+    //       return ColorsPalette.changeTone(amount, cuColor.argb, "-");
+    //     },
+    //     lighten(amount) {
+    //       return ColorsPalette.changeTone(amount, cuColor.argb, "-");
+    //     },
+    //   };
+    // }
   }
 }

@@ -8,12 +8,16 @@ export type ColorsVNameType = typeof schemas.colorsVNamesEnum[number];
 export type ThemeModeType = typeof schemas.themeModeEnum[number];
 export type OrigColTypes = ColorsNamesEnumType | ColorSurfacesEnumType;
 export type ColorsNamesType = LoosenString<OrigColTypes>;
-export type GetColorsReturnType = {
+export type ColorDetail = {
   argb: number;
   color: string;
   palette: TonalPalette;
-  tone: (tone: number, argb?: boolean) => string | number;
 };
+export type ToneFuncs = {
+  darken: (am: number) => ColorDetail;
+  lighten: (am: number) => ColorDetail;
+};
+export type GetColorsReturnType = ToneFuncs & ColorDetail;
 export type GetColorResType = "argb" | "palette" | "string";
 export type ReturnedArgbSurfaceType = Record<ThemeModeType, number>;
 export type ReturnedArgbNormType = Record<

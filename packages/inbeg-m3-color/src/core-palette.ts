@@ -7,11 +7,16 @@ import { BasePalette } from "./base-palette";
 import { getColors } from "./get-colors";
 import { colorsNamesEnum, surfacesColorsEnum } from "./schemas";
 import { TonalPalette } from "./tonal-palette";
-import { ColorsNamesEnumType, ColorSurfacesEnumType } from "./types";
+import {
+  ColorsNamesEnumType,
+  ColorsNamesType,
+  ColorSurfacesEnumType,
+} from "./types";
 
 export class CorePalette {
   hct: Hct;
   hue: number;
+  colorsNames: ColorsNamesType[];
   private source: number;
   private internalCore: BasePalette;
 
@@ -24,12 +29,38 @@ export class CorePalette {
     this.source = argb;
     this.hct = Hct.fromInt(argb);
     this.hue = this.hct.hue;
-    // this.hctObj = hct;
+    this.colorsNames = [
+      "background",
+      "onBackground",
+      "surface",
+      "onSurface",
+      "surfaceVariant",
+      "onSurfaceVariant",
+      "outline",
+      "shadow",
+      "inverseSurface",
+      "inverseOnSurface",
+      "inversePrimary",
+      "background",
+      "onBackground",
+      "surface",
+      "onSurface",
+      "surfaceVariant",
+      "onSurfaceVariant",
+      "outline",
+      "shadow",
+      "inverseSurface",
+      "inverseOnSurface",
+      "inversePrimary",
+    ];
 
     this.customColors =
       customColors
         ?.map((col) => customColor(this.source, col))
-        .map(({ color: { name, value } }) => ({ name, value })) || [];
+        .map(({ color: { name, value } }) => {
+          this.colorsNames.push(name);
+          return { name, value };
+        }) || [];
   }
   static isCustom(color: string) {
     return (

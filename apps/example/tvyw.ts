@@ -3,7 +3,7 @@ import { defineConfig } from "tvyw";
 export default defineConfig({
   repoType: "monoRepo",
   root: false,
-  framework: "vanilla",
+  framework: "react",
   packageName: "example",
   workspaceType: "app",
 });

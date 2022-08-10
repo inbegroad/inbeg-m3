@@ -1,131 +1,80 @@
 import { hexFromArgb } from "@material/material-color-utilities";
 import { TonalPalette } from "./tonal-palette";
-import { ColorSurfacesEnumType, ProcessedSurfeceColor } from "./types";
+import {
+  ColorSurfacesEnumType,
+  ProcessedSurfeceColor,
+  ThemeModeType,
+} from "./types";
+
+export const surfaceColorsTones: Record<
+  ColorSurfacesEnumType,
+  Record<ThemeModeType, number>
+> = {
+  background: {
+    dark: 10,
+    light: 99,
+  },
+  onBackground: {
+    dark: 90,
+    light: 10,
+  },
+  surface: {
+    dark: 10,
+    light: 99,
+  },
+  onSurface: {
+    dark: 90,
+    light: 10,
+  },
+  surfaceVariant: {
+    dark: 30,
+    light: 90,
+  },
+  onSurfaceVariant: {
+    dark: 80,
+    light: 30,
+  },
+  outline: {
+    dark: 60,
+    light: 50,
+  },
+  shadow: {
+    dark: 0,
+    light: 0,
+  },
+  inverseSurface: {
+    dark: 90,
+    light: 20,
+  },
+  inverseOnSurface: {
+    dark: 20,
+    light: 95,
+  },
+  inversePrimary: {
+    dark: 40,
+    light: 80,
+  },
+};
 
 export const getSurfaceColors = (
-  colors: Record<string, TonalPalette>
+  colors: Record<ColorSurfacesEnumType, TonalPalette>
 ): Record<ColorSurfacesEnumType, ProcessedSurfeceColor> => {
-  return {
-    background: {
-      hex: {
-        dark: hexFromArgb(colors.background.tone(10)),
-        light: hexFromArgb(colors.background.tone(99)),
-      },
-      palette: colors.background,
+  //@ts-ignore
+  const ret: Record<ColorSurfacesEnumType, ProcessedSurfeceColor> = {};
+  for (const name of Object.keys(colors)) {
+    const { dark, light } = surfaceColorsTones[name as ColorSurfacesEnumType];
+    ret[name as ColorSurfacesEnumType] = {
+      palette: colors[name as ColorSurfacesEnumType],
+
       argb: {
-        dark: colors.background.tone(10),
-        light: colors.background.tone(99),
+        dark: colors[name as ColorSurfacesEnumType].tone(dark),
+        light: colors[name as ColorSurfacesEnumType].tone(light),
       },
-    },
-    onBackground: {
       hex: {
-        dark: hexFromArgb(colors.onBackground.tone(90)),
-        light: hexFromArgb(colors.onBackground.tone(10)),
+        dark: hexFromArgb(colors[name as ColorSurfacesEnumType].tone(dark)),
+        light: hexFromArgb(colors[name as ColorSurfacesEnumType].tone(light)),
       },
-      palette: colors.onBackground,
-      argb: {
-        dark: colors.onBackground.tone(90),
-        light: colors.onBackground.tone(10),
-      },
-    },
-    surface: {
-      hex: {
-        dark: hexFromArgb(colors.surface.tone(10)),
-        light: hexFromArgb(colors.surface.tone(99)),
-      },
-      palette: colors.surface,
-      argb: {
-        dark: colors.surface.tone(10),
-        light: colors.surface.tone(99),
-      },
-    },
-    onSurface: {
-      hex: {
-        dark: hexFromArgb(colors.onSurface.tone(90)),
-        light: hexFromArgb(colors.onSurface.tone(10)),
-      },
-      palette: colors.onSurface,
-      argb: {
-        dark: colors.onSurface.tone(90),
-        light: colors.onSurface.tone(10),
-      },
-    },
-    surfaceVariant: {
-      hex: {
-        dark: hexFromArgb(colors.surfaceVariant.tone(30)),
-        light: hexFromArgb(colors.surfaceVariant.tone(90)),
-      },
-      palette: colors.surfaceVariant,
-      argb: {
-        dark: colors.surfaceVariant.tone(30),
-        light: colors.surfaceVariant.tone(90),
-      },
-    },
-    onSurfaceVariant: {
-      hex: {
-        dark: hexFromArgb(colors.onSurfaceVariant.tone(80)),
-        light: hexFromArgb(colors.onSurfaceVariant.tone(30)),
-      },
-      palette: colors.onSurfaceVariant,
-      argb: {
-        dark: colors.onSurfaceVariant.tone(80),
-        light: colors.onSurfaceVariant.tone(30),
-      },
-    },
-    outline: {
-      hex: {
-        dark: hexFromArgb(colors.outline.tone(60)),
-        light: hexFromArgb(colors.outline.tone(50)),
-      },
-      palette: colors.outline,
-      argb: {
-        dark: colors.outline.tone(60),
-        light: colors.outline.tone(50),
-      },
-    },
-    shadow: {
-      hex: {
-        dark: hexFromArgb(colors.shadow.tone(0)),
-        light: hexFromArgb(colors.shadow.tone(0)),
-      },
-      palette: colors.shadow,
-      argb: {
-        dark: colors.shadow.tone(0),
-        light: colors.shadow.tone(0),
-      },
-    },
-    inverseSurface: {
-      hex: {
-        dark: hexFromArgb(colors.inverseSurface.tone(90)),
-        light: hexFromArgb(colors.inverseSurface.tone(20)),
-      },
-      palette: colors.inverseSurface,
-      argb: {
-        dark: colors.inverseSurface.tone(90),
-        light: colors.inverseSurface.tone(20),
-      },
-    },
-    inverseOnSurface: {
-      hex: {
-        dark: hexFromArgb(colors.inverseOnSurface.tone(20)),
-        light: hexFromArgb(colors.inverseOnSurface.tone(95)),
-      },
-      palette: colors.inverseOnSurface,
-      argb: {
-        dark: colors.inverseOnSurface.tone(20),
-        light: colors.inverseOnSurface.tone(95),
-      },
-    },
-    inversePrimary: {
-      hex: {
-        dark: hexFromArgb(colors.inversePrimary.tone(40)),
-        light: hexFromArgb(colors.inversePrimary.tone(80)),
-      },
-      palette: colors.inversePrimary,
-      argb: {
-        dark: colors.inversePrimary.tone(40),
-        light: colors.inversePrimary.tone(80),
-      },
-    },
-  };
+    };
+  }
+  return ret;
 };

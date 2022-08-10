@@ -2,27 +2,32 @@
   "compilerOptions": {
     "target": "ESNext",
     "useDefineForClassFields": true,
-    "declaration": true,
-    "module": "ESNext",
     "lib": [
-      "ESNext",
-      "DOM"
+      "DOM",
+      "DOM.Iterable",
+      "ESNext"
     ],
-    "disableSourceOfProjectReferenceRedirect": false,
-    "moduleResolution": "Node",
+    "allowJs": false,
+    "skipLibCheck": false,
+    "esModuleInterop": false,
+    "allowSyntheticDefaultImports": true,
     "strict": true,
-    "sourceMap": true,
+    "forceConsistentCasingInFileNames": true,
+    "disableSourceOfProjectReferenceRedirect": false,
+    "module": "ESNext",
+    "moduleResolution": "Node",
     "resolveJsonModule": true,
-    "esModuleInterop": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noImplicitReturns": true,
+    "isolatedModules": false,
+    "jsx": "react-jsx",
     "noEmit": true,
     "composite": true,
     "rootDir": "./src",
     "outDir": "./dist",
     "declarationDir": "./types"
   },
+  "include": [
+    "src"
+  ],
   "references": [
     {
       "path": "../../packages/inbeg-m3-theme"
@@ -35,8 +40,5 @@
     "tvyw.ts",
     "dist/*",
     "test/*"
-  ],
-  "include": [
-    "src"
   ]
 }
