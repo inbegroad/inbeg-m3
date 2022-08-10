@@ -8,7 +8,7 @@
     "dev": "tvyw"
   },
   "dependencies": {
-    "@inbeg-m3/theme": "0.0.20",
+    "@inbeg-m3/theme": "0.0.21",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "styled-components": "^5.3.5"
