@@ -1,24 +1,25 @@
-import { getPadding } from "./get-padding";
+import { Padding } from "./get-padding";
 
-type CalculatePadding = {
+type CalculatePaddingProps = {
   borderSize: number;
   shapeSize: number;
-  padding: ReturnType<typeof getPadding>;
+  padding: Padding;
   fontSize: number;
 };
+type CalculatePadding = (props: CalculatePaddingProps) => Padding;
 
-export const calculatePadding = ({
+export const calculatePadding: CalculatePadding = ({
   borderSize,
   shapeSize,
-  padding,
+  padding: { paddingBottom, paddingLeft, paddingRight, paddingTop },
   fontSize,
-}: CalculatePadding) => ({
-  paddingTop: `calc(${borderSize / fontSize}rem + ${padding.top})`,
-  paddingRight: `calc(${borderSize / fontSize}rem + ${shapeSize} + ${
-    padding.right
-  })`,
-  paddingBottom: `calc(${borderSize / fontSize}rem + ${padding.bottom})`,
-  paddingLeft: `calc(${borderSize / fontSize}rem + ${shapeSize} + ${
-    padding.left
-  })`,
+}) => ({
+  paddingTop: `calc(${borderSize / fontSize}rem + ${paddingTop})`,
+  paddingRight: `calc(${
+    borderSize / fontSize
+  }rem + ${shapeSize} + ${paddingRight})`,
+  paddingBottom: `calc(${borderSize / fontSize}rem + ${paddingBottom})`,
+  paddingLeft: `calc(${
+    borderSize / fontSize
+  }rem + ${shapeSize} + ${paddingLeft})`,
 });

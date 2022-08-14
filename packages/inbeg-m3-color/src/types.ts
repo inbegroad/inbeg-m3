@@ -14,8 +14,8 @@ export type ColorDetail = {
   palette: TonalPalette;
 };
 export type ToneFuncs = {
-  darken: (am: number) => ColorDetail;
-  lighten: (am: number) => ColorDetail;
+  darken: (amount: 1 | 2 | 3 | 4) => ColorDetail;
+  lighten: (amount: 1 | 2 | 3 | 4) => ColorDetail;
 };
 export type GetColorsReturnType = ToneFuncs & ColorDetail;
 export type GetColorResType = "argb" | "palette" | "string";

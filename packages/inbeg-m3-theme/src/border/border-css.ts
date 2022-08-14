@@ -1,20 +1,21 @@
-import { Corners, ShapeSize } from "../types";
-import { getCornersPoints } from "./get-corners";
+import { ShapeSize, GetBorderProps } from "../types";
 
-export type BorderProps = {
-  corners?: Corners;
-  size?: ShapeSize;
-  borderColor?: string;
-  height: number;
-  width: number;
-};
-
-type Padding = { top: string; right: string; bottom: string; left: string };
+import { roundedBorderRadius } from "./border";
+import {
+  getCutCornersPoints,
+  getRoundedCorners,
+  RoundedBorder,
+} from "./get-corners";
+import { Padding } from "./get-padding";
 
 type GetFromShapeSize = { shapeSize: ShapeSize; height: number; width: number };
 const nR = 0.1428571428571429;
+const shapeSizeValidate = (shapeSize: ShapeSize) =>
+  shapeSize > 0 && shapeSize <= 7 ? shapeSize : 1;
 const getFromShapeSize = ({ shapeSize, height }: GetFromShapeSize): number =>
-  height < 31 ? ((height * nR) / 2) * shapeSize : (shapeSize * 7.54) / 2;
+  height < 31
+    ? ((height * nR) / 2) * shapeSizeValidate(shapeSize)
+    : (shapeSizeValidate(shapeSize) * 6.5) / 2;
 
 const getPadding = (padding?: string): Padding => {
   const gutter = padding || "0px";
@@ -22,97 +23,136 @@ const getPadding = (padding?: string): Padding => {
   switch (pad.length) {
     case 1:
       return {
-        bottom: gutter,
-        left: gutter,
-        right: gutter,
-        top: gutter,
+        paddingBottom: gutter,
+        paddingLeft: gutter,
+        paddingRight: gutter,
+        paddingTop: gutter,
       };
     case 2:
       return {
-        bottom: pad[0],
-        left: pad[1],
-        right: pad[1],
-        top: pad[0],
+        paddingBottom: pad[0],
+        paddingLeft: pad[1],
+        paddingRight: pad[1],
+        paddingTop: pad[0],
       };
     case 4:
       return {
-        bottom: pad[2],
-        left: pad[3],
-        right: pad[1],
-        top: pad[0],
+        paddingBottom: pad[2],
+        paddingLeft: pad[3],
+        paddingRight: pad[1],
+        paddingTop: pad[0],
       };
     default: {
       console.error(`Invalid gutter: ${gutter}, falling back to 0`);
       return {
-        bottom: "0rem",
-        left: "0rem",
-        right: "0rem",
-        top: "0rem",
+        paddingBottom: "0rem",
+        paddingLeft: "0rem",
+        paddingRight: "0rem",
+        paddingTop: "0rem",
       };
     }
   }
 };
-export const notchBorderElement = ({
+type WithPadding<T extends object> = Padding & T;
+export type CutBorder = {
+  position: string;
+  isolation: string;
+  clipPath: string;
+  psuedo?: {
+    position: string;
+    inset: number;
+    backgroundColor?: string;
+    clipPath: string;
+    zIndex: number;
+  };
+};
+export type BuildBorder = (
+  props: GetBorderProps
+) => WithPadding<Partial<CutBorder & RoundedBorder>>;
+export const buildBorder: BuildBorder = ({
+  edgeType,
   height: calcHeight,
   width: calcWidth,
-  corners: cs,
+  corners,
   borderColor,
-  size: shapeSi,
-}: BorderProps) => {
-  const notSize = shapeSi || 3;
-  const corners = cs || "all";
-  const borderSize = 1;
-  const shapeSize = getFromShapeSize({
-    height: calcHeight,
-    shapeSize: notSize,
-    width: calcWidth,
-  });
-  const nS = `${shapeSize / 16}rem`;
-  const bS = `${borderSize / 16}rem`;
-  const { bottom, left, right, top } = getPadding();
-  const padding = {
-    paddingTop: `calc(${bS} + ${top})`,
-    paddingRight: `calc(${bS} + ${nS} + ${right})`,
-    paddingBottom: `calc(${bS} + ${bottom})`,
-    paddingLeft: `calc(${bS} + ${nS} + ${left})`,
-  };
+  edge: size,
+  isOutline: borderOutline,
+  padding,
+}) => {
+  const pad = getPadding(padding);
+  const borderThickNess = 1;
+  if (edgeType === "cut") {
+    const shapeSize = getFromShapeSize({
+      height: calcHeight,
+      shapeSize: size,
+      width: calcWidth,
+    });
+    const sizeRem = `${shapeSize / 16}rem`;
+    const thickRem = borderOutline ? `${borderThickNess / 16}rem` : "0rem";
+    const padding = {
+      paddingTop: `calc(${thickRem} + ${pad.paddingTop})`,
+      paddingRight: `calc(${thickRem} + ${sizeRem} + ${pad.paddingRight})`,
+      paddingBottom: `calc(${thickRem} + ${pad.paddingBottom})`,
+      paddingLeft: `calc(${thickRem} + ${sizeRem} + ${pad.paddingLeft})`,
+    };
 
-  const {
-    p_1,
-    p_10,
-    p_11,
-    p_12,
-    p_13,
-    p_14,
-    p_15,
-    p_16,
-    p_17,
-    p_18,
-    p_2,
-    p_3,
-    p_4,
-    p_5,
-    p_6,
-    p_7,
-    p_8,
-    p_9,
-  } = getCornersPoints({ bS, corners, nS });
+    const {
+      p_1,
+      p_10,
+      p_11,
+      p_12,
+      p_13,
+      p_14,
+      p_15,
+      p_16,
+      p_17,
+      p_18,
+      p_2,
+      p_3,
+      p_4,
+      p_5,
+      p_6,
+      p_7,
+      p_8,
+      p_9,
+    } = getCutCornersPoints({ bS: thickRem, corners, nS: sizeRem });
 
-  const parent = `${p_1}, ${p_2}, ${p_3}, ${p_4}, ${p_5}, ${p_6}, ${p_7}, ${p_18}`;
-  const child = `${p_8}, ${p_9}, ${p_10}, ${p_11}, ${p_12}, ${p_13}, ${p_14}, ${p_15}, ${p_16}, ${p_17}, ${p_18}`;
-  const polygonParent = `polygon(${parent})`;
-  const polygonChild = `polygon(${parent} ,${child})`;
-  return {
-    position: "relative",
-    padding,
-    isolation: "isolate",
-    clipPath: polygonParent,
-    psudo: {
-      position: "absolute",
-      inset: 0,
-      backgroundColor: borderColor || "black",
-      clipPath: polygonChild,
-      zIndex: -1,
-    },
-  };
+    const parent = `${p_1}, ${p_2}, ${p_3}, ${p_4}, ${p_5}, ${p_6}, ${p_7}, ${p_18}`;
+    const child = `${p_8}, ${p_9}, ${p_10}, ${p_11}, ${p_12}, ${p_13}, ${p_14}, ${p_15}, ${p_16}, ${p_17}, ${p_18}`;
+    const polygonParent = `polygon(${parent})`;
+    const polygonChild = `polygon(${parent} ,${child})`;
+    return {
+      ...padding,
+      position: "relative",
+      isolation: "isolate",
+      clipPath: polygonParent,
+      psuedo: {
+        position: "absolute",
+        inset: 0,
+        backgroundColor: borderOutline ? borderColor : undefined,
+        clipPath: polygonChild,
+        zIndex: -1,
+      },
+    };
+  } else {
+    const radius = roundedBorderRadius[size];
+    console.log(
+      getRoundedCorners({
+        color: borderOutline ? borderColor : undefined,
+        corners,
+        radius,
+        isOutlined: borderOutline,
+      })
+    );
+
+    return {
+      ...pad,
+      ...getRoundedCorners({
+        color: borderOutline ? borderColor : undefined,
+        corners,
+        radius,
+        isOutlined: borderOutline,
+      }),
+    };
+  }
 };

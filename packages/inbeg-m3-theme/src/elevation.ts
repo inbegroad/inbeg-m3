@@ -4,6 +4,11 @@ export const elevationConst = (
   custom?: DeepPartial<ElevationType>
 ): ElevationType => ({
   cut: {
+    0: {
+      dark: undefined,
+      light: undefined,
+      ...custom?.rounded?.[0],
+    },
     1: {
       dark: "drop-shadow(3px 7px 8px rgba(0, 0, 0, 0.15)) drop-shadow(0px 1px 3px rgba(0, 0, 0, 0.3))",
       light:
@@ -36,6 +41,11 @@ export const elevationConst = (
     },
   },
   rounded: {
+    0: {
+      dark: undefined,
+      light: undefined,
+      ...custom?.rounded?.[0],
+    },
     1: {
       dark: "0px 1px 3px 1px rgba(0, 0, 0, 0.15), 0px 1px 2px rgba(0, 0, 0, 0.3)",
       light:

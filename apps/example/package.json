@@ -8,7 +8,7 @@
     "dev": "tvyw"
   },
   "dependencies": {
-    "@inbeg-m3/theme": "0.0.21",
+    "@inbeg-m3/theme": "workspace:^",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "styled-components": "^5.3.5"
@@ -27,7 +27,7 @@
     "eslint-config-react-app": "7.0.1",
     "prettier": "^2.7.1",
     "rimraf": "^3.0.2",
-    "tvyw": "0.1.27",
+    "tvyw": "0.1.28",
     "typescript": "4.7.4",
     "vite": "2.9.14"
   },

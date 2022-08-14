@@ -1,36 +1,41 @@
-type Padding = { top: string; right: string; bottom: string; left: string };
+export type Padding = {
+  paddingTop: string;
+  paddingRight: string;
+  paddingBottom: string;
+  paddingLeft: string;
+};
 export const getPadding = (padding?: string): Padding => {
   const gutter = padding || "0px";
   const pad = gutter.split(" ");
   switch (pad.length) {
     case 1:
       return {
-        bottom: gutter,
-        left: gutter,
-        right: gutter,
-        top: gutter,
+        paddingBottom: gutter,
+        paddingLeft: gutter,
+        paddingRight: gutter,
+        paddingTop: gutter,
       };
     case 2:
       return {
-        bottom: pad[0],
-        left: pad[1],
-        right: pad[1],
-        top: pad[0],
+        paddingBottom: pad[0],
+        paddingLeft: pad[1],
+        paddingRight: pad[1],
+        paddingTop: pad[0],
       };
     case 4:
       return {
-        bottom: pad[2],
-        left: pad[3],
-        right: pad[1],
-        top: pad[0],
+        paddingBottom: pad[2],
+        paddingLeft: pad[3],
+        paddingRight: pad[1],
+        paddingTop: pad[0],
       };
     default: {
       console.error(`Invalid gutter: ${gutter}, falling back to 0`);
       return {
-        bottom: "0rem",
-        left: "0rem",
-        right: "0rem",
-        top: "0rem",
+        paddingBottom: "0rem",
+        paddingLeft: "0rem",
+        paddingRight: "0rem",
+        paddingTop: "0rem",
       };
     }
   }

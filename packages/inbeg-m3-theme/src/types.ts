@@ -5,6 +5,8 @@ import {
   GetColorsReturnType,
   ToneFuncs,
 } from "@inbeg-m3/color";
+import { BuildBorder } from "./border/border-css";
+import { Padding } from "./border/get-padding";
 
 export type ButtonVarients =
   | "elevated"
@@ -18,18 +20,17 @@ type TBCorners = "top" | "bottom";
 type LRCorners = "left" | "right";
 type CompCorners = `${TBCorners}-${LRCorners}`;
 export type Corners = "all" | TBCorners | LRCorners | CompCorners;
-export type ElevationInt = 1 | 2 | 3 | 4 | 5;
-export type ShapeSize = 1 | 2 | 3 | 4 | 5 | 6 | 7;
+export type ElevationInt = 0 | 1 | 2 | 3 | 4 | 5;
+export type ShapeSize = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
 
 export type ElevationType = Record<
-  BorderShapeType,
-  Record<ElevationInt, Record<"light" | "dark", string>>
+  ShapeType,
+  Record<ElevationInt, Record<"light" | "dark", string | undefined>>
 >;
 export type ButtonSurfaceVariantType = {
-  color: Omit<GetColorsReturnType, keyof ToneFuncs>;
+  constentColor: Omit<GetColorsReturnType, keyof ToneFuncs>;
   borderColor?: Omit<GetColorsReturnType, keyof ToneFuncs>;
   backgroundColor?: Omit<GetColorsReturnType, keyof ToneFuncs>;
-  borderType?: BorderContainerType;
 };
 export type TypographyValuesType = {
   fontFamily: string;
@@ -45,7 +46,7 @@ export type TypographyType = Record<
 >;
 
 export type BorderContainerType = "default" | "outline";
-export type BordersValuesType = { [K in ShapeSize]: string };
+export type BordersValuesType = { [K in ShapeSize]: string | undefined };
 
 // cut: { [K in Corners]: { [K in ShapeInt]?: string } };
 // rounded: { [K in ShapeInt]: string };
@@ -53,9 +54,9 @@ export type BordersValuesType = { [K in ShapeSize]: string };
 //   BorderShapeType,
 //   Record<Corners, Record<ShapeInt, string>>
 // >;
-export type BorderShapeType = "rounded" | "cut";
+export type ShapeType = "rounded" | "cut";
 export type BorderType = {
-  defaultShape: BorderShapeType;
+  defaultShape: ShapeType;
   borders: DeepPartial<BordersValuesType>;
 };
 
@@ -73,23 +74,64 @@ export type DeepPartial<T> = T extends object
     }
   : T;
 export type DeepRequired<T> = {
-  [P in keyof T]-?: DeepRequired<NonNullable<T[P]>>;
+  [P in keyof T]?: DeepRequired<NonNullable<T[P]>>;
 };
 
-export type GetButtonProps = {
+export type GetBorderProps = {
+  corners: Corners;
+  edge: ShapeSize;
+  borderColor: string;
+  height: number;
+  width: number;
+  edgeType: ShapeType;
+  isOutline: boolean;
+  padding?: string;
+};
+export type GetElevation =
+  | {
+      boxShadow?: string;
+      filter?: string;
+    }
+  | undefined;
+
+export type BorderNoDimentions = Omit<GetBorderProps, "width" | "height">;
+export type BorderDimentions = Pick<GetBorderProps, "width" | "height">;
+export type ButtonElementProps = {
   variant: ButtonVarients;
+  elevation?: ElevationInt;
   size: SizeKeysType;
   surface: ColorsVNameType;
   color: ColorsNamesType;
-  elevationIntencity: ElevationInt;
   dark?: boolean;
-} & Omit<GetBorderProps, "borderColor">;
-export type GetBorderProps = {
-  shape?: BorderShapeType;
-  borderType?: BorderContainerType;
-  height: number;
-  width: number;
-  corners?: Corners;
-  borderSize?: ShapeSize;
-  borderColor: string;
+} & Pick<GetBorderProps, "corners" | "edge" | "edgeType">;
+export type GetButtonProps = (
+  props: Partial<
+    ButtonElementProps &
+      Omit<
+        GetBorderProps,
+        "borderColor" | "isOutline" | keyof ButtonElementProps
+      >
+  >
+) => ReturnType<BuildBorder> &
+  GetElevation &
+  TypographyValuesType & {
+    appearance: "none";
+    all: "unset";
+    cursor: "pointer";
+    backgroundColor: string;
+    color: string;
+  };
+
+export type StyledButtonProps = Partial<ButtonElementProps> & BorderDimentions;
+
+export type GetTypographyVarientProps = {
+  variant: TypographyKeys;
+  size: SizeKeysType;
+};
+export type GetElevationProps = { elevation?: ElevationInt; shape: ShapeType };
+export type ButtonDetailsFromVariantProps = {
+  variant: ButtonVarients;
+  surface: ColorsVNameType;
+  color: ColorsNamesType;
+  dark?: boolean;
 };

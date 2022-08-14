@@ -1,12 +1,28 @@
 import { Corners } from "../types";
 
-type GetCornersType = {
+type GetCutCornersType = {
   corners: Corners;
   nS: string;
   bS: string;
 };
+type GetCornersType = {
+  corners: Corners;
+  radius?: string;
+  isOutlined: boolean;
+  color?: string;
+};
 
-export const getCornersPoints = ({ bS, corners, nS }: GetCornersType) => {
+export type RoundedBorder = {
+  borderBottomLeftRadius: string | undefined;
+  borderBottomRightRadius: string | undefined;
+  borderTopLeftRadius: string | undefined;
+  borderTopRightRadius: string | undefined;
+  borderWidth: string;
+  borderColor: string | undefined;
+  borderStyle: "solid";
+};
+
+export const getCutCornersPoints = ({ bS, corners, nS }: GetCutCornersType) => {
   const fullMinsNs = `calc(100% - ${nS})`;
   const fullMinsBs = `calc(100% - ${bS})`;
   switch (corners) {
@@ -219,6 +235,111 @@ export const getCornersPoints = ({ bS, corners, nS }: GetCornersType) => {
         p_16: `${fullMinsBs} calc(${nS} * 1.03)`,
         p_17: `100% ${nS}`,
         p_18: `${fullMinsNs} 0%`,
+      };
+  }
+};
+export const getRoundedCorners = ({
+  color,
+  corners,
+  radius,
+  isOutlined,
+}: GetCornersType): RoundedBorder => {
+  const borderWidth = isOutlined ? "2px" : "0px";
+
+  switch (corners) {
+    case "all":
+      return {
+        borderBottomLeftRadius: radius,
+        borderBottomRightRadius: radius,
+        borderTopLeftRadius: radius,
+        borderTopRightRadius: radius,
+        borderWidth,
+        borderColor: color,
+        borderStyle: "solid",
+      };
+    case "bottom":
+      return {
+        borderBottomLeftRadius: radius,
+        borderBottomRightRadius: radius,
+        borderTopLeftRadius: "0px",
+        borderTopRightRadius: "0px",
+        borderWidth,
+        borderColor: color,
+        borderStyle: "solid",
+      };
+    case "top":
+      return {
+        borderTopLeftRadius: radius,
+        borderTopRightRadius: radius,
+        borderBottomLeftRadius: "0px",
+        borderBottomRightRadius: "0px",
+        borderWidth,
+        borderColor: color,
+        borderStyle: "solid",
+      };
+    case "left":
+      return {
+        borderBottomLeftRadius: radius,
+        borderTopLeftRadius: radius,
+
+        borderBottomRightRadius: "0px",
+
+        borderTopRightRadius: "0px",
+        borderWidth,
+        borderColor: color,
+        borderStyle: "solid",
+      };
+    case "right":
+      return {
+        borderBottomRightRadius: radius,
+        borderTopRightRadius: radius,
+        borderBottomLeftRadius: "0px",
+
+        borderTopLeftRadius: "0px",
+
+        borderWidth,
+        borderColor: color,
+        borderStyle: "solid",
+      };
+    case "bottom-left":
+      return {
+        borderBottomLeftRadius: radius,
+        borderBottomRightRadius: "0px",
+        borderTopLeftRadius: "0px",
+        borderTopRightRadius: "0px",
+        borderWidth,
+        borderColor: color,
+        borderStyle: "solid",
+      };
+    case "bottom-right":
+      return {
+        borderBottomRightRadius: radius,
+        borderBottomLeftRadius: "0px",
+        borderTopLeftRadius: "0px",
+        borderTopRightRadius: "0px",
+        borderWidth,
+        borderColor: color,
+        borderStyle: "solid",
+      };
+    case "top-right":
+      return {
+        borderTopRightRadius: radius,
+        borderBottomLeftRadius: "0px",
+        borderBottomRightRadius: "0px",
+        borderTopLeftRadius: "0px",
+        borderWidth,
+        borderColor: color,
+        borderStyle: "solid",
+      };
+    case "top-left":
+      return {
+        borderTopRightRadius: radius,
+        borderBottomLeftRadius: "0px",
+        borderBottomRightRadius: "0px",
+        borderTopLeftRadius: "0px",
+        borderWidth,
+        borderColor: color,
+        borderStyle: "solid",
       };
   }
 };

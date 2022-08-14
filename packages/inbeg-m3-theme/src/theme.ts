@@ -3,29 +3,29 @@ import {
   ColorsPalette,
   ColorsVNameType,
 } from "@inbeg-m3/color";
-import { roundedBorderRadius } from "./border/border";
 import {
-  BorderShapeType,
+  ShapeType,
   ButtonSurfaceVariantType,
-  ButtonVarients,
-  ElevationInt,
   ElevationType,
-  GetBorderProps,
   GetButtonProps,
-  SizeKeysType,
   ThemeConst,
-  TypographyKeys,
   TypographyType,
+  GetTypographyVarientProps,
+  GetElevationProps,
+  GetBorderProps,
+  ButtonDetailsFromVariantProps,
+  GetElevation,
+  SizeKeysType,
 } from "./types";
 import { typographyConst } from "./typography";
-import { getBorderRadiusFromCorner } from "./border/get-point-from-corner";
 import { elevationConst } from "./elevation";
-import { notchBorderElement } from "./border/border-css";
+import { BuildBorder, buildBorder } from "./border/border-css";
+import { getPadding, Padding } from "./border/get-padding";
 
 export class Theme {
   private colors: ColorsPalette;
   private elevation: ElevationType;
-  defaultShape: BorderShapeType;
+  defaultShape: ShapeType;
   rootFontSize: number;
   private typography: TypographyType;
   constructor({
@@ -41,126 +41,160 @@ export class Theme {
     this.defaultShape = border?.defaultShape || "rounded";
     this.elevation = elevationConst(elevation);
   }
-  private variantColor = (surface: ColorsVNameType): ColorsVNameType =>
-    surface === "color"
-      ? "onColor"
-      : surface === "onColor"
-      ? "color"
-      : surface === "colorContainer"
-      ? "onColorContainer"
-      : "colorContainer";
+  private variantColor = (surface: ColorsVNameType): ColorsVNameType => {
+    switch (surface) {
+      case "color":
+        return "onColor";
+      case "onColor":
+        return "color";
+      case "colorContainer":
+        return "onColorContainer";
+      case "onColorContainer":
+        return "colorContainer";
+    }
+  };
 
-  getTypographyVeriant = (
-    variant: TypographyKeys,
-    size: SizeKeysType,
-    surface: ColorsVNameType,
-    color: ColorsNamesType,
-    dark?: boolean
-  ) => ({
-    ...this.typography[variant][size],
-    color: this.colors.getColor(color, surface, dark),
-  });
-  private buttonSurfaceFromVariant = (
-    variant: ButtonVarients,
-    surface: ColorsVNameType,
-    color: ColorsNamesType,
-    dark?: boolean
-  ): ButtonSurfaceVariantType => {
+  getTypographyVeriant = ({ size, variant }: GetTypographyVarientProps) =>
+    this.typography[variant][size];
+  private buttonDetailsFromVariant = ({
+    color,
+    surface,
+    variant,
+    dark,
+  }: ButtonDetailsFromVariantProps): ButtonSurfaceVariantType => {
     switch (variant) {
       case "outlined":
         return {
-          color: this.colors.getColor(color, "color", dark),
-          borderType: "outline",
+          constentColor: this.colors.getColor(color, "color", dark),
           borderColor: this.colors.getColor(color, "color", dark),
+          backgroundColor: undefined,
         };
       case "text":
       case "elevated":
         return {
-          color: this.colors.getColor(color, "color", dark),
+          constentColor: this.colors.getColor(color, "color", dark),
         };
       case "filled":
         return {
           backgroundColor: this.colors.getColor(color, surface, dark),
-          borderColor: this.colors.getColor(color, surface, dark),
-          color: this.colors.getColor(color, this.variantColor(surface), dark),
+          constentColor: this.colors.getColor(
+            color,
+            this.variantColor(surface),
+            dark
+          ),
         };
       case "filled-tonal": {
         const backgroundColor = dark
-          ? this.colors.getColor(color, surface, dark).darken(9)
-          : this.colors.getColor(color, surface, dark).lighten(20);
+          ? this.colors.getColor(color, surface, dark).darken(2)
+          : this.colors.getColor(color, surface, dark).lighten(2);
         return {
           backgroundColor,
-          color: this.colors.getColor(color, this.variantColor(surface), dark),
+          constentColor: this.colors.getColor(
+            color,
+            this.variantColor(surface),
+            dark
+          ),
         };
       }
     }
   };
-  getButtonProps = ({
-    variant,
-    size,
-    surface,
-    color,
-    elevationIntencity,
+  private getButtonPadding(size: SizeKeysType) {
+    if (size === "large") return "0.9rem 1.2rem";
+    else if (size === "medium") return "0.45rem 0.7rem";
+    else return "0.2rem 0.37rem";
+  }
+  getButtonProps: GetButtonProps = ({
+    variant: vrnt,
+    size: siz,
+    surface: sur,
+    color: cl,
     dark,
-    shape,
+    elevation: el,
+    edgeType,
+    corners: cr,
     height,
+    edge: edgeSize,
     width,
-    borderSize,
-    borderType,
-    corners,
-  }: GetButtonProps) => {
-    const btnObj = this.buttonSurfaceFromVariant(variant, surface, color, dark);
+  }) => {
+    const color = cl || "primary";
+    const surface = sur || "color";
+    const variant = vrnt || "filled";
+    const size = siz || "medium";
+    const elevation = variant === "elevated" ? el || 1 : undefined;
+    const corners = cr || "all";
+    const btnObj = this.buttonDetailsFromVariant({
+      color,
+      surface,
+      variant,
+      dark,
+    });
+
     return {
-      fontFamily: this.typography.label[size].fontFamily,
-      fontSize: this.typography.label[size].fontSize,
-      fontStyle: this.typography.label[size].fontStyle,
-      fontWeight: this.typography.label[size].fontWeight,
-      lineHeight: this.typography.label[size].lineHeight,
-      backgroundColor: btnObj.backgroundColor,
-      letterSpacing: this.typography.label[size].letterSpacing,
-      color: btnObj.color,
-      borderType: btnObj.borderType,
-      elevation: this.getElevation(elevationIntencity, shape || "rounded"),
-      border: this.getBorder({
-        borderColor: btnObj.color.color,
-        height,
-        width,
-        borderSize,
-        borderType,
-        corners,
-        shape,
+      color: btnObj.constentColor.color,
+      ...this.getTypographyVeriant({ size, variant: "label" }),
+      ...this.getElevation({
+        shape: edgeType || this.defaultShape,
+        elevation,
       }),
+      ...this.getBorder({
+        borderColor: btnObj.constentColor.color,
+        height: height || 0,
+        width: width || 0,
+        isOutline: variant === "outlined",
+        edge: edgeSize || 7,
+        edgeType: edgeType || this.defaultShape,
+        corners: corners || "all",
+        padding: this.getButtonPadding(size),
+      }),
+      all: "unset",
+      cursor: "pointer",
+      appearance: "none",
+      backgroundColor: btnObj.backgroundColor?.color || "transparent",
     };
   };
   getBorder = ({
-    borderType: bt,
+    edgeType: bt,
     height,
-    shape,
     width,
     borderColor,
     corners: cors,
-    borderSize: intencity,
-  }: GetBorderProps) => {
-    const shapeSize = intencity || 3;
+    edge: intencity,
+    isOutline: borderOutline,
+    padding,
+  }: GetBorderProps): ReturnType<BuildBorder> => {
+    const size = intencity || 3;
     const corners = cors || "all";
     const borderType = bt || "default";
-    if (shape === "rounded") {
-      return getBorderRadiusFromCorner(corners, {
-        radius: roundedBorderRadius[shapeSize],
-        color: borderColor,
-      });
-    } else {
-      return notchBorderElement({
-        height,
-        width,
-        borderColor: borderType === "outline" ? borderColor : undefined,
-        corners,
-        size: shapeSize,
-      });
-    }
+
+    return buildBorder({
+      height,
+      width,
+      borderColor,
+      // borderColor: borderOutline ? borderColor : undefined,
+      corners,
+      edge: size,
+      isOutline: borderOutline,
+      edgeType: borderType,
+      padding,
+    });
   };
-  getElevation = (variant: ElevationInt, shape: BorderShapeType) =>
-    this.elevation[shape][variant][this.colors.isDark ? "dark" : "light"];
+  getPadding = (padding?: string): Padding => getPadding(padding);
+  getElevation = ({ shape, elevation }: GetElevationProps): GetElevation =>
+    elevation !== undefined
+      ? shape === "rounded"
+        ? {
+            boxShadow:
+              this.elevation.rounded[elevation][
+                this.colors.isDark ? "dark" : "light"
+              ],
+          }
+        : {
+            filter:
+              this.elevation.cut[elevation][
+                this.colors.isDark ? "dark" : "light"
+              ],
+          }
+      : undefined;
   getColor = (
     name: ColorsNamesType,
     surface: ColorsVNameType,

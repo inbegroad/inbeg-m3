@@ -1,7 +1,7 @@
 import { getNormalColors } from "./get-normal-color";
 import { getSurfaceColors } from "./get-surf-color";
 import { TonalPalette } from "./tonal-palette";
-import { ColorsNamesEnumType, ColorsObject } from "./types";
+import { ColorsObject } from "./types";
 
 export type GetColorsProps = {
   customs: Record<string, TonalPalette>;
@@ -15,5 +15,5 @@ export const getColors = ({
 }: GetColorsProps): ColorsObject => ({
   customs: getNormalColors(customs),
   surfaces: getSurfaceColors(surfaces),
-  originals: getNormalColors<ColorsNamesEnumType>(originals),
+  originals: getNormalColors(originals),
 });

@@ -1,5 +1,4 @@
 import { hexFromArgb } from "@material/material-color-utilities";
-import { objectKeys } from "./colors-palette";
 import { TonalPalette } from "./tonal-palette";
 import { ColorsVNameType, ProcessedColor, ThemeModeType } from "./types";
 

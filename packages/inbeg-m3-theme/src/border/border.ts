@@ -1,6 +1,7 @@
 import { BordersValuesType } from "../types";
 
 export const roundedBorderRadius: BordersValuesType = {
+  0: undefined,
   1: "0.125rem",
   2: "0.25rem",
   3: "0.5rem",
